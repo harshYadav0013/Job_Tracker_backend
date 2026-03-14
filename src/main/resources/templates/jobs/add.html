@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Job Application</title>
+</head>
+<body>
+
+<h2>Add Job Application</h2>
+
+<form th:action="@{/jobs/add}" method="post">
+
+    <label>Company Name</label><br>
+    <input type="text" name="companyName" required><br><br>
+
+    <label>Role</label><br>
+    <input type="text" name="role" required><br><br>
+
+    <label>Location</label><br>
+    <input type="text" name="location"><br><br>
+
+    <label>Date Applied</label><br>
+    <input type="date" name="appliedDate" required><br><br>
+
+    <label>Status</label><br>
+    <select name="status">
+        <option th:each="s : ${statuses}"
+                th:value="${s}"
+                th:text="${s}">
+        </option>
+    </select><br><br>
+
+    <label>Notes</label><br>
+    <textarea name="notes" rows="4" cols="40"></textarea><br><br>
+
+    <button type="submit">Save Application</button>
+    <a href="/jobs">Cancel</a>
+
+</form>
+
+</body>
+</html>

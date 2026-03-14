@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Job Applications</title>
+</head>
+<body>
+
+<h2>My Job Applications</h2>
+
+<!-- Filter by status -->
+<form th:action="@{/jobs}" method="get">
+    <select name="status">
+        <option value="">All</option>
+        <option th:each="s : ${statuses}"
+                th:value="${s}"
+                th:text="${s}"
+                th:selected="${s == selectedStatus}">
+        </option>
+    </select>
+    <button type="submit">Filter</button>
+</form>
+
+<br>
+<a href="/jobs/add">+ Add New Application</a>
+<br><br>
+
+<!-- Jobs table -->
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Company</th>
+        <th>Role</th>
+        <th>Location</th>
+        <th>Date Applied</th>
+        <th>Status</th>
+        <th>Notes</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="job : ${jobs}">
+        <td th:text="${job.companyName}"></td>
+        <td th:text="${job.role}"></td>
+        <td th:text="${job.location}"></td>
+        <td th:text="${job.appliedDate}"></td>
+        <td th:text="${job.status}"></td>
+        <td th:text="${job.notes}"></td>
+        <td>
+            <a th:href="@{/jobs/edit/{id}(id=${job.id})}">Edit</a>
+            &nbsp;
+            <form th:action="@{/jobs/delete/{id}(id=${job.id})}"
+                  method="post" style="display:inline;">
+                <button type="submit"
+                        onclick="return confirm('Delete this application?')">
+                    Delete
+                </button>
+            </form>
+        </td>
+    </tr>
+    <!-- show message if no jobs -->
+    <tr th:if="${#lists.isEmpty(jobs)}">
+        <td colspan="7">No applications yet. Add one!</td>
+    </tr>
+</table>
+
+<br>
+<a href="/dashboard">← Back to Dashboard</a>
+
+</body>
+</html>
