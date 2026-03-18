@@ -17,36 +17,31 @@ public class JobService {
         this.jobRepository = jobRepository;
     }
 
-
     public List<JobApplication> getAllJobs(User user) {
         return jobRepository.findByUser(user);
     }
-
 
     public List<JobApplication> getJobsByStatus(User user, Status status) {
         return jobRepository.findByUserAndStatus(user, status);
     }
 
-
-    public void addJob(JobApplication job) {
-        jobRepository.save(job);
+    public JobApplication addJob(JobApplication job) {
+        return jobRepository.save(job);
     }
-
 
     public JobApplication getJobById(Long id) {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Job not found"));
     }
 
-
-    public void updateJob(JobApplication job) {
-        jobRepository.save(job);
+    public JobApplication updateJob(JobApplication job) {
+        return jobRepository.save(job);
     }
-
 
     public void deleteJob(Long id) {
-        jobRepository.deleteById(id);
+        jobRepository.deleteById(id);                        // stays void ✓
     }
+
     public long getTotalCount(User user) {
         return jobRepository.countByUser(user);
     }
@@ -54,5 +49,4 @@ public class JobService {
     public long getCountByStatus(User user, Status status) {
         return jobRepository.countByUserAndStatus(user, status);
     }
-
 }
