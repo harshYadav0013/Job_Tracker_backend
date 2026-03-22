@@ -40,8 +40,16 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/dashboard", true)
-                        .failureUrl("/login?error=true")
+                        .successHandler((request, response, authentication) -> {
+                            response.setStatus(200);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"message\": \"login successful\"}");
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            response.setStatus(401);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Invalid credentials\"}");
+                        })
                         .permitAll()
                 )
 
