@@ -66,15 +66,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("heartfelt-rolypoly-9dc533.netlify.app"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://heartfelt-rolypoly-9dc533.netlify.app"));
+                "https://heartfelt-rolypoly-9dc533.netlify.app"
+        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);  // changed from /api/** to /**
+        source.registerCorsConfiguration("/**", config);
         return source;
     }
 
