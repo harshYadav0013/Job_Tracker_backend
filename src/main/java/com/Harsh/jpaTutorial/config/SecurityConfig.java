@@ -20,13 +20,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                // ✅ Enable CORS
+                // Enable CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                // 🔥 Disable CSRF completely (important for APIs)
+                //  Disable CSRF completely (important for APIs)
                 .csrf(csrf -> csrf.disable())
 
-                // ✅ Authorization rules
+                //  Authorization rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/**").permitAll()   // 🔥 allow all APIs
                         .requestMatchers(
@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // ✅ API-based login (NO redirect)
+                //  API-based login (NO redirect)
                 .formLogin(form -> form
                         .loginProcessingUrl("/login")
                         .successHandler((request, response, authentication) -> {
@@ -54,7 +54,7 @@ public class SecurityConfig {
                         })
                 )
 
-                // ✅ No redirects on unauthorized
+                //  No redirects on unauthorized
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(401);
@@ -63,13 +63,13 @@ public class SecurityConfig {
                         })
                 )
 
-                // ✅ Logout
+                //  Logout
                 .logout(logout -> logout.permitAll());
 
         return http.build();
     }
 
-    // ✅ CORS configuration
+    //  CORS configuration
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -89,13 +89,13 @@ public class SecurityConfig {
         return source;
     }
 
-    // ✅ Password encoder
+    //  Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ Fix cookies for cross-site (important for Netlify + Railway)
+    //  Fix cookies for cross-site (important for Netlify + Railway)
     @Bean
     public CookieSameSiteSupplier cookieSameSiteSupplier() {
         return CookieSameSiteSupplier.ofNone();
