@@ -20,29 +20,26 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-
+                // ✅ Enable CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
+                // 🔥 Disable CSRF completely (important for APIs)
+                .csrf(csrf -> csrf.disable())
 
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**", "/login")
-                )
-
-
+                // ✅ Authorization rules
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/**").permitAll()   // 🔥 allow all APIs
                         .requestMatchers(
                                 "/login",
-                                "/api/auth/register",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/api-docs/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
-
+                // ✅ API-based login (NO redirect)
                 .formLogin(form -> form
                         .loginProcessingUrl("/login")
                         .successHandler((request, response, authentication) -> {
@@ -57,7 +54,7 @@ public class SecurityConfig {
                         })
                 )
 
-
+                // ✅ No redirects on unauthorized
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(401);
@@ -66,13 +63,13 @@ public class SecurityConfig {
                         })
                 )
 
-
+                // ✅ Logout
                 .logout(logout -> logout.permitAll());
 
         return http.build();
     }
 
-
+    // ✅ CORS configuration
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -92,13 +89,13 @@ public class SecurityConfig {
         return source;
     }
 
-
+    // ✅ Password encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-
+    // ✅ Fix cookies for cross-site (important for Netlify + Railway)
     @Bean
     public CookieSameSiteSupplier cookieSameSiteSupplier() {
         return CookieSameSiteSupplier.ofNone();
