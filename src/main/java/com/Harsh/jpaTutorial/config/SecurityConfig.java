@@ -20,27 +20,30 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
+
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**", "/login", "/register", "/api/register")
+                        .ignoringRequestMatchers("/api/**", "/login")
                 )
+
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/register", "/login", "/api/register",
+                                "/login",
+                                "/api/auth/register",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/api-docs/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        //.requestMatchers("/api/**").authenticated()
                         .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
 
+
                 .formLogin(form -> form
-                        .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .successHandler((request, response, authentication) -> {
                             response.setStatus(200);
@@ -52,47 +55,50 @@ public class SecurityConfig {
                             response.setContentType("application/json");
                             response.getWriter().write("{\"error\": \"Invalid credentials\"}");
                         })
-                        .permitAll()
                 )
+
 
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
-                            String path = request.getRequestURI();
-                            if (path.startsWith("/api/")) {
-                                response.setStatus(401);
-                                response.setContentType("application/json");
-                                response.getWriter().write("{\"error\": \"Not authenticated\"}");
-                            } else {
-                                response.sendRedirect("/login");
-                            }
+                            response.setStatus(401);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Not authenticated\"}");
                         })
                 )
+
 
                 .logout(logout -> logout.permitAll());
 
         return http.build();
     }
 
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "https://job-trackerweb.netlify.app"
         ));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
     @Bean
     public CookieSameSiteSupplier cookieSameSiteSupplier() {
         return CookieSameSiteSupplier.ofNone();
